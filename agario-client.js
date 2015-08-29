@@ -69,7 +69,7 @@ Client.prototype = {
 
         var buf = new Buffer(5);
         buf.writeUInt8(254, 0);
-        buf.writeUInt32LE(5, 1);
+        buf.writeUInt32LE(4, 1);
         this.send(buf);
 
         buf = new Buffer(5);
@@ -138,8 +138,11 @@ Client.prototype = {
 
         if(this.debug >= 5)
             this.log('dump: ' + (new Packet(buf).toString()));
-
-        this.ws.send(buf);
+        try {
+            this.ws.send(buf);
+        } catch (exception) {
+            this.disconnect();
+        }
     },
 
     reset: function() {
@@ -209,8 +212,8 @@ Client.prototype = {
 
                 ball_id = packet.readUInt32LE();
                 if(ball_id == 0) break;
-                coordinate_x = packet.readSInt32LE();
-                coordinate_y = packet.readSInt32LE();
+                coordinate_x = packet.readSInt16LE();
+                coordinate_y = packet.readSInt16LE();
                 size = packet.readSInt16LE();
 
                 var color_R = packet.readUInt8();
