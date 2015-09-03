@@ -420,15 +420,8 @@ Client.prototype = {
             while (color.length > 6) {
                 color = '0' + color;
             }
-            color = '#' + color;/*
-            chatBoard.push({
-                "name": getString(),
-                "color": color,
-                "message": getString(),
-                "time": Date.now()
-            });*/
-            //client.emit('chatRecieve', getString() /* sender */, getString() /*message*/, color);
-            console.log(getString()+": "+getString()+" , 색:"+color);
+            color = '#' + color;
+            client.emit('chatRecieve', getString() /* sender */, getString() /*message*/, color);
         },
 
         '240': function(client, packet) {
@@ -483,13 +476,13 @@ Client.prototype = {
         this.send(buf);
     },
     // sendUint8 = Buffer
-    chat: function(str) { // NOT WORKING CORRECTLY
+    chat: function(str) {
         var buf = new Buffer(2 + 2*str.length);
         var offset = 0;
         buf.writeUInt8(99, offset++);
         buf.writeUInt8(0, offset++);
         for (var i=0;i<str.length;++i) {
-            buf.writeUInt16LE(str.charCodeAt(i), 1 + i*2);
+            buf.writeUInt16LE(str.charCodeAt(i), offset);
             offset += 2;
         }
         this.send(buf);
